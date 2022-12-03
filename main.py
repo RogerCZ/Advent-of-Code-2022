@@ -1,4 +1,4 @@
-
+import itertools
 
 def day1():
     file = open("inputs/day1_1.txt", "r")
@@ -77,5 +77,51 @@ def day2():
     print("Part 1 total score: " + str(total_part1))
     print("Part 2 total score: " + str(total_part2))
 
+
+def day3():
+    file = open("inputs/day3_1.txt", "r")
+    prio_count = 0
+    group_prio_count = 0
+    group = []
+    for line in file.readlines():
+        first = line[:- int((len(line) / 2) + 1)]
+        second = line[int(len(line) / 2):-1]
+        flag = False
+        for c1 in first:
+            for c2 in second:
+                if c1 == c2:
+                    if c1.islower():
+                        prio = ord(c1) - 96
+                    else:
+                        prio = ord(c1) - 38
+                    prio_count += prio
+                    flag = True
+                    break
+            if flag:
+                break
+        group.append(line[:-1])
+        if len(group) == 3:
+            flag = False
+            for c1 in group[0]:
+                for c2 in group[1]:
+                    for c3 in group[2]:
+                        if c1 == c2 and c2 == c3:
+                            if c1.islower():
+                                prio = ord(c1) - 96
+                            else:
+                                prio = ord(c1) - 38
+                            group_prio_count += prio
+                            flag = True
+                            break
+                    if flag:
+                        break
+                if flag:
+                    break
+            group.clear()
+    print("Part 1 priority count: " + str(prio_count))
+    print("Part 2 priority count: " + str(group_prio_count))
+
+
 # day1()
-day2()
+# day2()
+day3()
