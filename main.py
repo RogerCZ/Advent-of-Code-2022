@@ -1,5 +1,6 @@
 import itertools
 
+
 def day1():
     file = open("inputs/day1_1.txt", "r")
     top1 = 0
@@ -122,6 +123,29 @@ def day3():
     print("Part 2 priority count: " + str(group_prio_count))
 
 
+def day4():
+    file = open("inputs/day4_1.txt", "r")
+    complete_overlaps = 0
+    partial_overlaps = 0
+    for line in file.readlines():
+        first_min = int(line[:-1].split(",")[0].split("-")[0])
+        first_max = int(line[:-1].split(",")[0].split("-")[1])
+        second_min = int(line[:-1].split(",")[1].split("-")[0])
+        second_max = int(line[:-1].split(",")[1].split("-")[1])
+        # print(first_min, first_max, second_min, second_max)
+        if (first_min >= second_min and first_max <= second_max) or (
+                second_min >= first_min and second_max <= first_max):
+            complete_overlaps += 1
+        elif (second_min <= first_min <= second_max) \
+                or (second_min <= first_max <= second_max) \
+                or (first_min <= second_min <= first_max) \
+                or (first_min <= second_max <= first_max):
+            partial_overlaps += 1
+    print("Number of complete overlaps: " + str(complete_overlaps))
+    print("NUmber of all overlaps: " + str(partial_overlaps + complete_overlaps))
+
+
 # day1()
 # day2()
-day3()
+# day3()
+day4()
