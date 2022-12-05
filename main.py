@@ -1,5 +1,5 @@
 import itertools
-
+import copy
 
 def day1():
     file = open("inputs/day1_1.txt", "r")
@@ -145,7 +145,58 @@ def day4():
     print("NUmber of all overlaps: " + str(partial_overlaps + complete_overlaps))
 
 
+def day5():
+    file = open("inputs/day5_1.txt", "r")
+    stacks = list()
+    process = list()
+    number_of_stacks = 0
+    stack_input = list()
+    blank_line = False
+    for line in file.readlines():
+        if line == "\n":
+            blank_line = True
+            continue
+        if not blank_line:
+            stack_input.append(line[:-1])
+        else:
+            command = list()
+            command.append(int(line[:-1].split("move ")[1].split(" from")[0]))
+            command.append(int(line[:-1].split("from ")[1].split(" to")[0]))
+            command.append(int(line[:-1].split("to ")[1]))
+            process.append(command)
+    number_of_stacks = int(stack_input.pop().split(" ")[-1])
+    for i in range(number_of_stacks):
+        stacks.append(list())
+    for level in stack_input:
+        for i in range(number_of_stacks):
+            index = 1 + i * 4
+            if index > len(level):
+                break
+            if level[index] == ' ':
+                continue
+            stacks[i].append(level[index])
+    for i in range(number_of_stacks):
+        stacks[i].reverse()
+    old_stacks = copy.deepcopy(stacks)
+    for p in process:
+        for n in range(p[0]):
+            stacks[p[2]-1].append(stacks[p[1]-1].pop())
+    top_crates = ""
+    for stack in stacks:
+        top_crates += stack[-1]
+    print("Part 1: " + top_crates)
+    for p in process:
+        old_stacks[p[2]-1] += old_stacks[p[1]-1][-p[0]:]
+        del old_stacks[p[1]-1][-p[0]:]
+        # print(old_stacks)
+    top_crates = ""
+    for stack in old_stacks:
+        top_crates += stack[-1]
+    print("Part 2: " + top_crates)
+
+
 # day1()
 # day2()
 # day3()
-day4()
+# day4()
+day5()
