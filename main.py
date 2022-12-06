@@ -195,8 +195,60 @@ def day5():
     print("Part 2: " + top_crates)
 
 
+def day6():
+    file = open("inputs/day6_1.txt", "r")
+    line = file.readline()
+    index = 0
+    marker = list()
+    flag_duplicit = False
+    for c in line:
+        flag_duplicit = False
+        if index < 4:
+            marker.append(c)
+            index += 1
+            continue
+        for i in range(3):
+            for j in range(i+1, 4):
+                if marker[i] == marker[j]:
+                    flag_duplicit = True
+                    break
+            if flag_duplicit:
+                break
+        if flag_duplicit:
+            marker.pop(0)
+            marker.append(c)
+            index += 1
+            continue
+        print("Part 1: " + str(index))
+        break
+
+    index = 0
+    message = list()
+    for c in line:
+        flag_duplicit = False
+        if index < 14:
+            message.append(c)
+            index += 1
+            continue
+        for i in range(13):
+            for j in range(i+1, 14):
+                if message[i] == message[j]:
+                    flag_duplicit = True
+                    break
+            if flag_duplicit:
+                break
+        if flag_duplicit:
+            message.pop(0)
+            message.append(c)
+            index += 1
+            continue
+        print("Part 2: " + str(index))
+        break
+
+
 # day1()
 # day2()
 # day3()
 # day4()
-day5()
+# day5()
+day6()
