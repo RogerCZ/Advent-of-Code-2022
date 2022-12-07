@@ -1,5 +1,7 @@
 import itertools
 import copy
+from anytree import Node, RenderTree, find_by_attr, find, PostOrderIter, PreOrderIter
+
 
 def day1():
     file = open("inputs/day1_1.txt", "r")
@@ -246,9 +248,49 @@ def day6():
         break
 
 
+def day7():
+    file = open("inputs/day7_1.txt", "r")
+    root = Node("root", size=0)
+    current_dir = root
+    for line in file.readlines():
+        # print(current_dir)
+        parts = line[:-1].split(" ")
+        if parts[0] == "$":
+            if parts[1] == "cd":
+                if parts[2] == "/":
+                    current_dir = root
+                elif parts[2] == "..":
+                    current_dir = current_dir.parent
+                else:
+                    current_dir = find(current_dir, lambda n: n.name == parts[2] and n in current_dir.children, maxlevel=2)
+                    # print(current_dir, parts[2])
+        elif parts[0] == "dir":
+            Node(parts[1], parent=current_dir, size=0)
+        else:
+            Node(parts[1], parent=current_dir, size=int(parts[0]))
+    for node in PostOrderIter(root):
+        if not node.is_root:
+            node.parent.size += node.size
+    size_sum = 0
+    for node in PreOrderIter(root):
+        if not node.is_leaf and node.size <= 100000:
+            size_sum += node.size
+    for pre, fill, node in RenderTree(root):
+        print("%s%s %d" % (pre, node.name, node.size))
+    print("\nPart 1: " + str(size_sum))
+    unused_space = 70000000 - root.size
+    required_space = 30000000
+    candidate = 0
+    for node in PostOrderIter(root):
+        if not node.is_leaf and node.size + unused_space >= required_space:
+            if node.size < candidate or candidate == 0:
+                candidate = node.size
+    print("Part 2: " + str(candidate))
+
 # day1()
 # day2()
 # day3()
 # day4()
 # day5()
-day6()
+# day6()
+day7()
