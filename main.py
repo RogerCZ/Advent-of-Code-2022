@@ -1,6 +1,10 @@
 import itertools
 import copy
 from anytree import Node, RenderTree, find_by_attr, find, PostOrderIter, PreOrderIter
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import time
 
 
 def day1():
@@ -287,10 +291,81 @@ def day7():
                 candidate = node.size
     print("Part 2: " + str(candidate))
 
+
+def day8():
+    file = open("inputs/day8_1.txt", "r")
+    mat = list()
+    for line in file.readlines():
+        arr = list()
+        for c in line[:-1]:
+            arr.append(int(c))
+        mat.append(arr)
+    mat = np.array(mat)
+
+    ax = sns.heatmap(mat, cmap=sns.color_palette("dark:green", as_cmap=True), yticklabels=False, xticklabels=False)
+    # plt.show()
+    size = mat[0].size
+    visible_count = (size + size - 2) * 2
+    highest_score = 0
+    for y in range(1, size - 1):
+        for x in range(1, size - 1):
+            visible_flags = [True, True, True, True]
+            i = x - 1
+            j = y - 1
+            partial_score = 0
+            score = 1
+            while i >= 0:
+                if mat[y][x] <= mat[y][i]:
+                    visible_flags[0] = False
+                    partial_score += 1
+                    break
+                partial_score += 1
+                i -= 1
+            score *= partial_score
+            partial_score = 0
+            i = x + 1
+            while i < size:
+                if mat[y][x] <= mat[y][i]:
+                    visible_flags[1] = False
+                    partial_score += 1
+                    break
+                partial_score += 1
+                i += 1
+            score *= partial_score
+            partial_score = 0
+            while j >= 0:
+                if mat[y][x] <= mat[j][x]:
+                    visible_flags[2] = False
+                    partial_score += 1
+                    break
+                partial_score += 1
+                j -= 1
+            j = y + 1
+            score *= partial_score
+            partial_score = 0
+            while j < size:
+                if mat[y][x] <= mat[j][x]:
+                    visible_flags[3] = False
+                    partial_score += 1
+                    break
+                partial_score += 1
+                j += 1
+            score *= partial_score
+            if True in visible_flags:
+                visible_count += 1
+            if score > highest_score:
+                highest_score = score
+    print("Part 1: " + str(visible_count))
+    print("Part 2: " + str(highest_score))
+
+
+start_time = time.time()
 # day1()
 # day2()
 # day3()
 # day4()
 # day5()
 # day6()
-day7()
+# day7()
+day8()
+print("--- %s seconds ---" % (time.time() - start_time))
