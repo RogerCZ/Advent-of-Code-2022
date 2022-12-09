@@ -266,7 +266,9 @@ def day7():
                 elif parts[2] == "..":
                     current_dir = current_dir.parent
                 else:
-                    current_dir = find(current_dir, lambda n: n.name == parts[2] and n in current_dir.children, maxlevel=2)
+                    current_dir = find(current_dir,
+                                       lambda n: n.name == parts[2] and n in current_dir.children,
+                                       maxlevel=2)
                     # print(current_dir, parts[2])
         elif parts[0] == "dir":
             Node(parts[1], parent=current_dir, size=0)
@@ -302,7 +304,7 @@ def day8():
         mat.append(arr)
     mat = np.array(mat)
 
-    ax = sns.heatmap(mat, cmap=sns.color_palette("dark:green", as_cmap=True), yticklabels=False, xticklabels=False)
+    # ax = sns.heatmap(mat, cmap=sns.color_palette("dark:green", as_cmap=True), yticklabels=False, xticklabels=False)
     # plt.show()
     size = mat[0].size
     visible_count = (size + size - 2) * 2
@@ -359,6 +361,65 @@ def day8():
     print("Part 2: " + str(highest_score))
 
 
+def day9():
+    file = open("inputs/day9_1.txt", "r")
+    x = 0
+    y = 1
+    # head_coords = [0, 0]
+    knot_coords = list()
+    for a in range(10):
+        knot_coords.append([0, 0])
+    tail_history = [set(), set()]
+    for line in file.readlines():
+        direction = line[:-1].split(" ")[0]
+        moves = int(line[:-1].split(" ")[1])
+        for i in range(moves):
+
+            if direction == "R":
+                knot_coords[0][x] += 1
+            elif direction == "L":
+                knot_coords[0][x] -= 1
+            elif direction == "U":
+                knot_coords[0][y] += 1
+            else:
+                knot_coords[0][y] -= 1
+
+            for n in range(1, 10):
+                if knot_coords[n-1][x] == knot_coords[n][x] - 2 and knot_coords[n-1][y] == knot_coords[n][y]:
+                    knot_coords[n][x] -= 1
+                elif knot_coords[n-1][y] == knot_coords[n][y] - 2 and knot_coords[n-1][x] == knot_coords[n][x]:
+                    knot_coords[n][y] -= 1
+                elif knot_coords[n-1][x] == knot_coords[n][x] + 2 and knot_coords[n-1][y] == knot_coords[n][y]:
+                    knot_coords[n][x] += 1
+                elif knot_coords[n-1][y] == knot_coords[n][y] + 2 and knot_coords[n-1][x] == knot_coords[n][x]:
+                    knot_coords[n][y] += 1
+                elif knot_coords[n-1][x] == knot_coords[n][x] - 2 and knot_coords[n-1][y] == knot_coords[n][y] + 1 \
+                        or knot_coords[n-1][x] == knot_coords[n][x] - 1 and knot_coords[n-1][y] == knot_coords[n][y] + 2 \
+                        or knot_coords[n-1][x] == knot_coords[n][x] - 2 and knot_coords[n-1][y] == knot_coords[n][y] + 2:
+                    knot_coords[n][x] -= 1
+                    knot_coords[n][y] += 1
+                elif knot_coords[n-1][x] == knot_coords[n][x] - 2 and knot_coords[n-1][y] == knot_coords[n][y] - 1 \
+                        or knot_coords[n-1][x] == knot_coords[n][x] - 1 and knot_coords[n-1][y] == knot_coords[n][y] - 2 \
+                        or knot_coords[n-1][x] == knot_coords[n][x] - 2 and knot_coords[n-1][y] == knot_coords[n][y] - 2:
+                    knot_coords[n][x] -= 1
+                    knot_coords[n][y] -= 1
+                elif knot_coords[n-1][x] == knot_coords[n][x] + 1 and knot_coords[n-1][y] == knot_coords[n][y] - 2 \
+                        or knot_coords[n-1][x] == knot_coords[n][x] + 2 and knot_coords[n-1][y] == knot_coords[n][y] - 1\
+                        or knot_coords[n-1][x] == knot_coords[n][x] + 2 and knot_coords[n-1][y] == knot_coords[n][y] - 2:
+                    knot_coords[n][x] += 1
+                    knot_coords[n][y] -= 1
+                elif knot_coords[n-1][x] == knot_coords[n][x] + 2 and knot_coords[n-1][y] == knot_coords[n][y] + 1 \
+                        or knot_coords[n-1][x] == knot_coords[n][x] + 1 and knot_coords[n-1][y] == knot_coords[n][y] + 2\
+                        or knot_coords[n-1][x] == knot_coords[n][x] + 2 and knot_coords[n-1][y] == knot_coords[n][y] + 2:
+                    knot_coords[n][x] += 1
+                    knot_coords[n][y] += 1
+
+            tail_history[0].add(str(knot_coords[1][x]) + ";" + str(knot_coords[1][y]))
+            tail_history[1].add(str(knot_coords[9][x]) + ";" + str(knot_coords[9][y]))
+    print("Part 1: " + str(len(tail_history[0])))
+    print("Part 2: " + str(len(tail_history[1])))
+
+
 start_time = time.time()
 # day1()
 # day2()
@@ -367,5 +428,6 @@ start_time = time.time()
 # day5()
 # day6()
 # day7()
-day8()
+# day8()
+day9()
 print("--- %s seconds ---" % (time.time() - start_time))
