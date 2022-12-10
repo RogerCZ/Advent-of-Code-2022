@@ -420,6 +420,56 @@ def day9():
     print("Part 2: " + str(len(tail_history[1])))
 
 
+def day10():
+    file = open("inputs/day10_1.txt", "r")
+    x = 1
+    cycle = 1
+    check_cycle = 20
+    check_sum = 0
+    pixels = list()
+    for line in file.readlines():
+        command = line[:-1].split(" ")[0]
+        if command == "noop":
+            if cycle == check_cycle:
+                check_sum += check_cycle * x
+                check_cycle += 40
+            if cycle == 240:
+                print("Part 1: " + str(check_sum))
+                # return
+            modulo_cycle = (cycle-1) % 40
+            if x == modulo_cycle or x - 1 == modulo_cycle or x + 1 == modulo_cycle:
+                pixels.append(1)
+            else:
+                pixels.append(0)
+            cycle += 1
+            continue
+        value = int(line[:-1].split(" ")[1])
+        for i in range(2):
+            if cycle == check_cycle:
+                check_sum += check_cycle * x
+                check_cycle += 40
+            if cycle == 240:
+                print("Part 1: " + str(check_sum))
+                # return
+            modulo_cycle = (cycle-1) % 40
+            if x == modulo_cycle or x - 1 == modulo_cycle or x + 1 == modulo_cycle:
+                pixels.append(1)
+            else:
+                pixels.append(0)
+            if i == 1:
+                x += value
+            cycle += 1
+    screen = ""
+    for i in range(len(pixels)):
+        if (i + 1) % 40 == 0:
+            screen += "\n"
+        elif pixels[i] == 0:
+            screen += u"\u2591"
+        else:
+            screen += u"\u2588"
+    print(screen)
+
+
 start_time = time.time()
 # day1()
 # day2()
@@ -429,5 +479,6 @@ start_time = time.time()
 # day6()
 # day7()
 # day8()
-day9()
+# day9()
+day10()
 print("--- %s seconds ---" % (time.time() - start_time))
