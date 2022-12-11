@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import time
+import math
 
 
 def day1():
@@ -470,6 +471,86 @@ def day10():
     print(screen)
 
 
+def day11():
+    file = open("inputs/day11_1.txt", "r")
+    monkeys = list()
+    monkey = dict()
+    for line in file.readlines():
+        while line[0] == " ":
+            line = line[1:]
+        row_id = line.split(" ")[0:2]
+        if row_id[0] == "\n":
+            continue
+        elif row_id == "Monkey":
+            continue
+        elif row_id[0] == "Starting":
+            items = list()
+            for item in line[:-1].split(": ")[1].split(", "):
+                items.append(int(item))
+            monkey["items"] = items
+        elif row_id[0] == "Operation:":
+            operation = dict()
+            operation["operator"] = line.split(" ")[4]
+            operation["value"] = line[:-1].split(" ")[5]
+            monkey["operation"] = operation
+        elif row_id[0] == "Test:":
+            test_value = int(line[:-1].split(" ")[-1])
+            monkey["test_value"] = test_value
+        elif row_id[1] == "true:":
+            monkey["true_id"] = int(line[:-1].split(" ")[-1])
+        elif row_id[1] == "false:":
+            monkey["false_id"] = int(line[:-1].split(" ")[-1])
+            monkeys.append(monkey.copy())
+            monkey.clear()
+    # print(monkeys)
+    # 20 for part 1
+    rounds = 10000
+    inspections_count = list()
+    for i in range(len(monkeys)):
+        inspections_count.append(0)
+    divisors = list()
+    for monkey in monkeys:
+        divisors.append(monkey["test_value"])
+    lcm = math.lcm(*divisors)
+
+    for my_round in range(rounds):
+        # print("Round: " + str(my_round + 1))
+        monkey_id = 0
+        for monkey in monkeys:
+            for i in range(len(monkey["items"])):
+                item = monkey["items"].pop(0)
+
+                if monkey["operation"]["value"] == "old":
+                    value = item
+                else:
+                    value = int(monkey["operation"]["value"])
+
+                if monkey["operation"]["operator"] == "*":
+                    item *= value
+                else:
+                    item += value
+                # Uncomment for part 1
+                # item //= 3
+
+                # uncomment for part 2
+                if item > lcm:
+                    reminder = item % lcm
+                    if reminder == 0:
+                        item = lcm
+                    else:
+                        item = reminder
+
+                if item % monkey["test_value"] == 0:
+                    monkeys[monkey["true_id"]]["items"].append(item)
+                else:
+                    monkeys[monkey["false_id"]]["items"].append(item)
+                inspections_count[monkey_id] += 1
+            monkey_id += 1
+    inspections_count.sort()
+    monkey_business = inspections_count[-1] * inspections_count[-2]
+    print(monkey_business)
+
+
 start_time = time.time()
 # day1()
 # day2()
@@ -480,5 +561,6 @@ start_time = time.time()
 # day7()
 # day8()
 # day9()
-day10()
+# day10()
+day11()
 print("--- %s seconds ---" % (time.time() - start_time))
