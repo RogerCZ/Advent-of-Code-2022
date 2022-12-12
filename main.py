@@ -1,3 +1,4 @@
+import collections
 import itertools
 import copy
 from anytree import Node, RenderTree, find_by_attr, find, PostOrderIter, PreOrderIter
@@ -6,6 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import time
 import math
+import sys
 
 
 def day1():
@@ -551,6 +553,57 @@ def day11():
     print(monkey_business)
 
 
+def bfs(grid, start, width, height):
+    queue = collections.deque([[start]])
+    seen = {start}
+    while queue:
+        path = queue.popleft()
+        x, y = path[-1]
+        # print(chr(grid[y][x] + ord('a') - 1))
+        if grid[y][x] == 27:
+            return path
+        for x2, y2 in ((x+1,y), (x-1,y), (x,y+1), (x,y-1)):
+            if 0 <= x2 < width and 0 <= y2 < height and  grid[y2][x2] <= (grid[y][x] + 1) and (x2, y2) not in seen:
+                queue.append(path + [(x2, y2)])
+                seen.add((x2, y2))
+    return -1
+
+
+def day12():
+    file = open("inputs/day12_1.txt")
+    matrix = list()
+    start = (0, 0)
+    for line in file.readlines():
+        row = list()
+        for c in line[:-1]:
+            if c == 'S':
+                row.append(0)
+            elif c == 'E':
+                row.append(ord('z') - ord('a') + 2)
+            else:
+                row.append(ord(c) - ord('a') + 1)
+        matrix.append(row)
+
+    for y in range(len(matrix)):
+        for x in range(len(matrix[y])):
+            if matrix[y][x] == 0:
+                start = (x, y)
+
+    path = bfs(matrix, start, len(matrix[0]), len(matrix))
+    print("Part 1: " + str(len(path) - 1))
+
+    matrix[start[1]][start[0]] = 1
+    shortest = 0
+    for y in range(len(matrix)):
+        for x in range(len(matrix[y])):
+            if matrix[y][x] == 1:
+                path = bfs(matrix, (x, y), len(matrix[0]), len(matrix))
+                if path != -1:
+                    if shortest == 0 or len(path) - 1 < shortest:
+                        shortest = len(path) - 1
+    print("Part 2: " + str(shortest))
+
+
 start_time = time.time()
 # day1()
 # day2()
@@ -562,5 +615,6 @@ start_time = time.time()
 # day8()
 # day9()
 # day10()
-day11()
+# day11()
+day12()
 print("--- %s seconds ---" % (time.time() - start_time))
