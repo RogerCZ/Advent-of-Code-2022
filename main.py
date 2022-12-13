@@ -8,6 +8,7 @@ import seaborn as sns
 import time
 import math
 import sys
+import ast
 
 
 def day1():
@@ -604,6 +605,101 @@ def day12():
     print("Part 2: " + str(shortest))
 
 
+def compare_pair(left, right):
+    if type(left) is type(right):
+        if type(left) == int:
+            if left < right:
+                return 1
+            elif left == right:
+                return 0
+            else:
+                return -1
+        elif type(left) == list:
+            if len(left) < len(right):
+                for i in range(len(left)):
+                    ret =  compare_pair(left[i], right[i])
+                    if ret == 1:
+                        return 1
+                    elif ret == -1:
+                        return -1
+                return 1
+            elif len(left) > len(right):
+                for i in range(len(right)):
+                    ret =  compare_pair(left[i], right[i])
+                    if ret == 1:
+                        return 1
+                    elif ret == -1:
+                        return -1
+                return -1
+            else:
+                for i in range(len(right)):
+                    ret = compare_pair(left[i], right[i])
+                    if ret == 1:
+                        return 1
+                    elif ret == -1:
+                        return -1
+                return 0
+    elif type(left) == int:
+        return compare_pair([left], right)
+    else:
+        return compare_pair(left, [right])
+
+
+def bubble_sort(array):
+    n = len(array)
+
+    for i in range(n):
+        already_sorted = True
+
+        for j in range(n - i - 1):
+            if compare_pair(array[j], array[j + 1]) != 1:
+                array[j], array[j + 1] = array[j + 1], array[j]
+                already_sorted = False
+
+        if already_sorted:
+            break
+
+    return array
+
+
+def day13():
+    file = open("inputs/day13_1.txt", "r")
+    pairs = list()
+    pair = list()
+    indices_sum = 0
+    for line in file.readlines():
+        if line == "\n":
+            pairs.append(pair.copy())
+            pair.clear()
+            continue
+        pair.append(ast.literal_eval(line[:-1]))
+    pairs.append(pair.copy())
+
+    for i in range(len(pairs)):
+        if compare_pair(pairs[i][0], pairs[i][1]) == 1:
+            indices_sum += i + 1
+    print("Part 1: " + str(indices_sum))
+
+    array = list()
+    array.append([[2]])
+    array.append([[6]])
+    for pair in pairs:
+        array.append(pair[0].copy())
+        array.append(pair[1].copy())
+
+    array = bubble_sort(array)
+
+    # for line in array:
+        # print(line)
+
+    decoder_key = 1
+    for i in range(len(array)):
+        packet = array[i]
+        if packet == [[2]] or packet == [[6]]:
+            decoder_key *= i + 1
+    print("Part 2: " + str(decoder_key))
+
+
 start_time = time.time()
 # day1()
 # day2()
@@ -616,5 +712,6 @@ start_time = time.time()
 # day9()
 # day10()
 # day11()
-day12()
+# day12()
+day13()
 print("--- %s seconds ---" % (time.time() - start_time))
