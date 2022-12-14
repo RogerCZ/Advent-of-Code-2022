@@ -9,6 +9,7 @@ import time
 import math
 import sys
 import ast
+import os
 
 
 def day1():
@@ -190,14 +191,14 @@ def day5():
     old_stacks = copy.deepcopy(stacks)
     for p in process:
         for n in range(p[0]):
-            stacks[p[2]-1].append(stacks[p[1]-1].pop())
+            stacks[p[2] - 1].append(stacks[p[1] - 1].pop())
     top_crates = ""
     for stack in stacks:
         top_crates += stack[-1]
     print("Part 1: " + top_crates)
     for p in process:
-        old_stacks[p[2]-1] += old_stacks[p[1]-1][-p[0]:]
-        del old_stacks[p[1]-1][-p[0]:]
+        old_stacks[p[2] - 1] += old_stacks[p[1] - 1][-p[0]:]
+        del old_stacks[p[1] - 1][-p[0]:]
         # print(old_stacks)
     top_crates = ""
     for stack in old_stacks:
@@ -218,7 +219,7 @@ def day6():
             index += 1
             continue
         for i in range(3):
-            for j in range(i+1, 4):
+            for j in range(i + 1, 4):
                 if marker[i] == marker[j]:
                     flag_duplicit = True
                     break
@@ -241,7 +242,7 @@ def day6():
             index += 1
             continue
         for i in range(13):
-            for j in range(i+1, 14):
+            for j in range(i + 1, 14):
                 if message[i] == message[j]:
                     flag_duplicit = True
                     break
@@ -389,32 +390,40 @@ def day9():
                 knot_coords[0][y] -= 1
 
             for n in range(1, 10):
-                if knot_coords[n-1][x] == knot_coords[n][x] - 2 and knot_coords[n-1][y] == knot_coords[n][y]:
+                if knot_coords[n - 1][x] == knot_coords[n][x] - 2 and knot_coords[n - 1][y] == knot_coords[n][y]:
                     knot_coords[n][x] -= 1
-                elif knot_coords[n-1][y] == knot_coords[n][y] - 2 and knot_coords[n-1][x] == knot_coords[n][x]:
+                elif knot_coords[n - 1][y] == knot_coords[n][y] - 2 and knot_coords[n - 1][x] == knot_coords[n][x]:
                     knot_coords[n][y] -= 1
-                elif knot_coords[n-1][x] == knot_coords[n][x] + 2 and knot_coords[n-1][y] == knot_coords[n][y]:
+                elif knot_coords[n - 1][x] == knot_coords[n][x] + 2 and knot_coords[n - 1][y] == knot_coords[n][y]:
                     knot_coords[n][x] += 1
-                elif knot_coords[n-1][y] == knot_coords[n][y] + 2 and knot_coords[n-1][x] == knot_coords[n][x]:
+                elif knot_coords[n - 1][y] == knot_coords[n][y] + 2 and knot_coords[n - 1][x] == knot_coords[n][x]:
                     knot_coords[n][y] += 1
-                elif knot_coords[n-1][x] == knot_coords[n][x] - 2 and knot_coords[n-1][y] == knot_coords[n][y] + 1 \
-                        or knot_coords[n-1][x] == knot_coords[n][x] - 1 and knot_coords[n-1][y] == knot_coords[n][y] + 2 \
-                        or knot_coords[n-1][x] == knot_coords[n][x] - 2 and knot_coords[n-1][y] == knot_coords[n][y] + 2:
+                elif knot_coords[n - 1][x] == knot_coords[n][x] - 2 and knot_coords[n - 1][y] == knot_coords[n][y] + 1 \
+                        or knot_coords[n - 1][x] == knot_coords[n][x] - 1 and knot_coords[n - 1][y] == knot_coords[n][
+                    y] + 2 \
+                        or knot_coords[n - 1][x] == knot_coords[n][x] - 2 and knot_coords[n - 1][y] == knot_coords[n][
+                    y] + 2:
                     knot_coords[n][x] -= 1
                     knot_coords[n][y] += 1
-                elif knot_coords[n-1][x] == knot_coords[n][x] - 2 and knot_coords[n-1][y] == knot_coords[n][y] - 1 \
-                        or knot_coords[n-1][x] == knot_coords[n][x] - 1 and knot_coords[n-1][y] == knot_coords[n][y] - 2 \
-                        or knot_coords[n-1][x] == knot_coords[n][x] - 2 and knot_coords[n-1][y] == knot_coords[n][y] - 2:
+                elif knot_coords[n - 1][x] == knot_coords[n][x] - 2 and knot_coords[n - 1][y] == knot_coords[n][y] - 1 \
+                        or knot_coords[n - 1][x] == knot_coords[n][x] - 1 and knot_coords[n - 1][y] == knot_coords[n][
+                    y] - 2 \
+                        or knot_coords[n - 1][x] == knot_coords[n][x] - 2 and knot_coords[n - 1][y] == knot_coords[n][
+                    y] - 2:
                     knot_coords[n][x] -= 1
                     knot_coords[n][y] -= 1
-                elif knot_coords[n-1][x] == knot_coords[n][x] + 1 and knot_coords[n-1][y] == knot_coords[n][y] - 2 \
-                        or knot_coords[n-1][x] == knot_coords[n][x] + 2 and knot_coords[n-1][y] == knot_coords[n][y] - 1\
-                        or knot_coords[n-1][x] == knot_coords[n][x] + 2 and knot_coords[n-1][y] == knot_coords[n][y] - 2:
+                elif knot_coords[n - 1][x] == knot_coords[n][x] + 1 and knot_coords[n - 1][y] == knot_coords[n][y] - 2 \
+                        or knot_coords[n - 1][x] == knot_coords[n][x] + 2 and knot_coords[n - 1][y] == knot_coords[n][
+                    y] - 1 \
+                        or knot_coords[n - 1][x] == knot_coords[n][x] + 2 and knot_coords[n - 1][y] == knot_coords[n][
+                    y] - 2:
                     knot_coords[n][x] += 1
                     knot_coords[n][y] -= 1
-                elif knot_coords[n-1][x] == knot_coords[n][x] + 2 and knot_coords[n-1][y] == knot_coords[n][y] + 1 \
-                        or knot_coords[n-1][x] == knot_coords[n][x] + 1 and knot_coords[n-1][y] == knot_coords[n][y] + 2\
-                        or knot_coords[n-1][x] == knot_coords[n][x] + 2 and knot_coords[n-1][y] == knot_coords[n][y] + 2:
+                elif knot_coords[n - 1][x] == knot_coords[n][x] + 2 and knot_coords[n - 1][y] == knot_coords[n][y] + 1 \
+                        or knot_coords[n - 1][x] == knot_coords[n][x] + 1 and knot_coords[n - 1][y] == knot_coords[n][
+                    y] + 2 \
+                        or knot_coords[n - 1][x] == knot_coords[n][x] + 2 and knot_coords[n - 1][y] == knot_coords[n][
+                    y] + 2:
                     knot_coords[n][x] += 1
                     knot_coords[n][y] += 1
 
@@ -440,7 +449,7 @@ def day10():
             if cycle == 240:
                 print("Part 1: " + str(check_sum))
                 # return
-            modulo_cycle = (cycle-1) % 40
+            modulo_cycle = (cycle - 1) % 40
             if x == modulo_cycle or x - 1 == modulo_cycle or x + 1 == modulo_cycle:
                 pixels.append(1)
             else:
@@ -455,7 +464,7 @@ def day10():
             if cycle == 240:
                 print("Part 1: " + str(check_sum))
                 # return
-            modulo_cycle = (cycle-1) % 40
+            modulo_cycle = (cycle - 1) % 40
             if x == modulo_cycle or x - 1 == modulo_cycle or x + 1 == modulo_cycle:
                 pixels.append(1)
             else:
@@ -563,8 +572,8 @@ def bfs(grid, start, width, height):
         # print(chr(grid[y][x] + ord('a') - 1))
         if grid[y][x] == 27:
             return path
-        for x2, y2 in ((x+1,y), (x-1,y), (x,y+1), (x,y-1)):
-            if 0 <= x2 < width and 0 <= y2 < height and  grid[y2][x2] <= (grid[y][x] + 1) and (x2, y2) not in seen:
+        for x2, y2 in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+            if 0 <= x2 < width and 0 <= y2 < height and grid[y2][x2] <= (grid[y][x] + 1) and (x2, y2) not in seen:
                 queue.append(path + [(x2, y2)])
                 seen.add((x2, y2))
     return -1
@@ -617,7 +626,7 @@ def compare_pair(left, right):
         elif type(left) == list:
             if len(left) < len(right):
                 for i in range(len(left)):
-                    ret =  compare_pair(left[i], right[i])
+                    ret = compare_pair(left[i], right[i])
                     if ret == 1:
                         return 1
                     elif ret == -1:
@@ -625,7 +634,7 @@ def compare_pair(left, right):
                 return 1
             elif len(left) > len(right):
                 for i in range(len(right)):
-                    ret =  compare_pair(left[i], right[i])
+                    ret = compare_pair(left[i], right[i])
                     if ret == 1:
                         return 1
                     elif ret == -1:
@@ -690,7 +699,7 @@ def day13():
     array = bubble_sort(array)
 
     # for line in array:
-        # print(line)
+    # print(line)
 
     decoder_key = 1
     for i in range(len(array)):
@@ -698,6 +707,83 @@ def day13():
         if packet == [[2]] or packet == [[6]]:
             decoder_key *= i + 1
     print("Part 2: " + str(decoder_key))
+
+
+def day14():
+    file = open("inputs/day14_1.txt", "r")
+    limit_coords = [1000, 1000, 0, 0]
+    structures = list()
+    for line in file.readlines():
+        coords = list()
+        for coord in line[:-1].split(" -> "):
+            coords.append([int(coord.split(",")[0]), int(coord.split(",")[1])])
+            if coords[-1][0] < limit_coords[0]:
+                limit_coords[0] = coords[-1][0]
+            elif coords[-1][0] > limit_coords[2]:
+                limit_coords[2] = coords[-1][0]
+            elif coords[-1][1] < limit_coords[1]:
+                limit_coords[1] = coords[-1][1]
+            elif coords[-1][1] > limit_coords[3]:
+                limit_coords[3] = coords[-1][1]
+        structures.append(coords.copy())
+
+    scan = np.zeros((limit_coords[3] + 3, limit_coords[2] + 2), dtype=int)
+    scan[-1] = np.ones(len(scan[-1]), dtype=int)
+    for structure in structures:
+        for i in range(len(structure) - 1):
+            if structure[i][1] < structure[i+1][1]:
+                y1 = structure[i][1]
+                y2 = structure[i+1][1]
+            else:
+                y1 = structure[i+1][1]
+                y2 = structure[i][1]
+
+            if structure[i][0] < structure[i+1][0]:
+                x1 = structure[i][0]
+                x2 = structure[i+1][0]
+            else:
+                x1 = structure[i+1][0]
+                x2 = structure[i][0]
+
+            for y in range(y1, y2 + 1):
+                for x in range(x1, x2 + 1):
+                    scan[y][x] = 1
+
+    sand_source = [500, 0]
+
+    rested_count = 0
+    rested_coord = [0, 0]
+    [x, y] = sand_source.copy()
+    # 'while y != len(scan) - 1' for part 1
+    while rested_coord != [500, 0]:
+        if x < 1:
+            col = np.zeros((len(scan), 1), dtype=int)
+            col[-1] = 1
+            scan = np.hstack((col, scan))
+        elif x > len(scan[0]) - 2:
+            col = np.zeros((len(scan), 1), dtype=int)
+            col[-1] = 1
+            scan = np.hstack((scan, col))
+        if scan[y+1][x] == 0:
+            scan[y][x] = 0
+            scan[y+1][x] = 1
+            y += 1
+        elif scan[y+1][x - 1] == 0:
+            scan[y][x] = 0
+            scan[y + 1][x - 1] = 1
+            y += 1
+            x -= 1
+        elif scan[y+1][x+1] == 0:
+            scan[y][x] = 0
+            scan[y+1][x+1] = 1
+            y += 1
+            x += 1
+        else:
+            scan[y][x] = 2
+            rested_coord = [x, y]
+            [x, y] = sand_source.copy()
+            rested_count += 1
+    print("Part 2: " + str(rested_count))
 
 
 start_time = time.time()
@@ -713,5 +799,6 @@ start_time = time.time()
 # day10()
 # day11()
 # day12()
-day13()
+# day13()
+day14()
 print("--- %s seconds ---" % (time.time() - start_time))
