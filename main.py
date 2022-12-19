@@ -10,7 +10,7 @@ import math
 import sys
 import ast
 import os
-
+import sparse
 
 def day1():
     file = open("inputs/day1_1.txt", "r")
@@ -786,6 +786,126 @@ def day14():
     print("Part 2: " + str(rested_count))
 
 
+def day15():
+    file = open("inputs/day15_1.txt", "r")
+    pairs = list()
+    for line in file.readlines():
+        coords = line.split(" ")
+        pairs.append([[int(coords[2][:-1].split("=")[1]), int(coords[3][:-1].split("=")[1])],
+                      [int(coords[-2][:-1].split("=")[1]), int(coords[-1][:-1].split("=")[1])]])
+
+    modifiers = [0, 0]
+    dimensions = [0, 0]
+    for [[x1, y1], [x2, y2]] in pairs:
+        if x1 + modifiers[0] > dimensions[0]:
+            dimensions[0] = x1 + modifiers[0]
+        elif x1 < 0 and abs(x1) > modifiers[0]:
+            dimensions[0] += abs(x1) - modifiers[0]
+            modifiers[0] = abs(x1)
+        if x2 + modifiers[0] > dimensions[0]:
+            dimensions[0] = x2 + modifiers[0]
+        elif x2 < 0 and abs(x2) > modifiers[0]:
+            dimensions[0] += abs(x2) - modifiers[0]
+            modifiers[0] = abs(x2)
+        if y1 + modifiers[1] > dimensions[1]:
+            dimensions[1] = y1 + modifiers[1]
+        elif y1  < 0 and abs(y1) > modifiers[1]:
+            dimensions[1] += abs(y1) - modifiers[1]
+            modifiers[1] = abs(y1)
+        if y2 + modifiers[1] > dimensions[1]:
+            dimensions[1] = y2 + modifiers[1]
+        elif y2 < 0 and abs(y2) > modifiers[1]:
+            dimensions[1] += abs(y2) - modifiers[1]
+            modifiers[1] = abs(y2)
+
+    # scan = np.zeros((dimensions[1] + 1, dimensions[0] + 1), dtype=np.int8)
+    scan = np.zeros((1, dimensions[0] + 1), dtype=np.int8)
+
+    line = 10
+    for [[x1, y1], [x2, y2]] in pairs:
+        # remove for part 1
+        break
+        x1 += modifiers[0]
+        x2 += modifiers[0]
+        y1 += modifiers[1]
+        y2 += modifiers[1]
+        man_dist = abs(x1 - x2) + abs(y1 - y2)
+
+        for i in range(-man_dist, man_dist + 1):
+            if y1 + i == line + modifiers[1]:
+                if y1 + i < 0:
+                    #row = np.zeros((abs(y1 + i), len(scan[0])), dtype=np.int8)
+                    # scan = np.vstack((row, scan))
+                    modifiers[1] += abs(y1 + i)
+                    y1 += abs(y1 + i)
+                    y2 += abs(y1 + i)
+                if y1 + i > len(scan) - 1:
+                    pass
+                    # row = np.zeros((1, len(scan[0])), dtype=np.int8)
+                    # scan = np.vstack((scan, row))
+                for j in range(abs(i)-man_dist, man_dist+1-abs(i)):
+                    if x1 + j < 0:
+                        col = np.zeros((len(scan), abs(x1 + i)), dtype=np.int8)
+                        scan = np.hstack((col, scan))
+                        modifiers[0] += abs(x1 + i)
+                        x1 += abs(x1 + i)
+                        x2 += abs(x1 + i)
+                    if x1 + j > len(scan[0]) - 1:
+                        col = np.zeros((len(scan), 1), dtype=np.int8)
+                        scan = np.hstack((scan, col))
+                    if y1 + i == line + modifiers[1]:
+                        scan[0][x1 + j] = 1
+        if y1 == line + modifiers[1]:
+            scan[0][x1] = 0
+        if y2 == line + modifiers[1]:
+            scan[0][x2] = 0
+
+    for row in scan:
+        for x in row:
+            if x == 0:
+                pass
+                # print(".", end="")
+            else:
+                pass
+                # print("#", end="")
+        # print()
+    print("Part 1: " + str(np.sum(scan[0])))
+
+    sensors = list()
+    for [[x1, y1], [x2, y2]] in pairs:
+        sensor = [[x1, y1], abs(x1 - x2) + abs(y1 - y2)]
+        sensors.append(sensor)
+
+    for i in range(0, 4000000):
+        limits = list()
+        close_sensors = list()
+        for item in sensors:
+            if abs(item[0][1] - i) <= item[1]:
+                close_sensors.append(item)
+        for [[x, y], r] in close_sensors:
+            y_dist = abs(y - i)
+            x_max = (r - y_dist)
+            start = x - x_max
+            end = x + x_max
+            limits.append([start, end])
+
+        limits.sort()
+        stack = list()
+        stack.append(limits[0])
+        for limit in limits:
+            if stack[-1][0] <= limit[0] <= stack[-1][-1]:
+                stack[-1][-1] = max(stack[-1][-1], limit[-1])
+            else:
+                stack.append(limit)
+        if len(stack) > 1:
+            for a in range(len(stack) - 1):
+                diff = abs(stack[a][1] - stack[a+1][0])
+                if diff == 2:
+                    tuning_freq = (stack[a][1] + 1) * 4000000 + i
+                    print("Part 2: ", str(tuning_freq))
+                    return
+
+
 start_time = time.time()
 # day1()
 # day2()
@@ -800,5 +920,6 @@ start_time = time.time()
 # day11()
 # day12()
 # day13()
-day14()
+# day14()
+day15()
 print("--- %s seconds ---" % (time.time() - start_time))
